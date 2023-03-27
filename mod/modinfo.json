@@ -1,11 +1,12 @@
 {
-	"id": "example",
-	"name": "Example mod",
-	"version": "1.0.0",
+	"id": "moredlls",
+	"name": "More Dlls",
+	"version": "0.2.1",
 	"hide_version": false,
-	"authors": "Coding:\nExample Person\nExample Person 2",
-	"description": "Example Remix mod.",
-	"requirements": [],
-	"requirements_names": [],
-	"checksum_override_version": false
+	"authors": "MoonWatcher610",
+	"description": "This mod should hopefully eventually add a few different variants of DLL into the game, as long as I can figure out how to utilize the game's code and have sufficient motivation to do so. Now there's two! The [b]Explosive Long Legs[/b], which was made at the same time as Niko's version, as well as the [b]Zappy Long Legs[/b] are here now. Thanks again, to all the Rain World Ideas people on the Discord! The constant help is, well, helpful.\n\n[h1][b]Explosive Daddy Long Legs[/b][/h1]\nThis variant of Daddy Long Legs can utilize a hyper-mutation that allows it to create explosions at it's tentacles, in order to stun them and catch prey easier. So, try not to get caught, if you want to live.\n\nThis creature cannot currently spawn in the base game, and you will have to manually spawn it in using the Arena, Beastmaster, or Dev Console. If using Arena or Beastmaster, the icon is a red version of the Daddy Long Legs icon.\nIt should be able to be added into a region's spawns using the name \"ell\", \"explosivedll\", or \"explosivedaddylonglegs\". If you are for some reason using this mod and Niko's version at the same time, the first name may cause issues, but the last two should be fine.\n\n[h2][b]Zappy Daddy Long Legs[/b][/h2]\nIt's quite shocking what this Long Legs can do! Try your best not to get caught off-guard by the electrifying properties of this version of Daddy.\n\nSame as the ELL, this can't spawn naturally, ect., ect. While using Arena or Beastmaster, it will have a cyan color to the icon.\nIt should be able to be added into a region's spawns using the name \"zll\", \"zapdll\", \"zaplonglegs\", or \"zapdaddylonglegs\".\n\n\n[h3]Options[/h3]\nThere's now an options config in the remix menu. Right now, it only does things regarding the ZLL mainly because I was worried about small performance issues and the possible unfairness of one of it's abilities, since it could reach you off-screen in a multi-screen room. So I decided to just make it customizable so that everyone can decide for themselves what they want.\n\nHave fun with this, and feel free to use it in your own mods if you want, as long this page is referenced somehow!",
+	"requirements": ["fisobs"],
+	"requirements_names": ["Fisobs"],
+	"checksum_override_version": false,
+	"tags" : ["Creatures"]
 }

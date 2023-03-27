@@ -1,0 +1,2 @@
+[ADD]staticelectricitylong : staticelectricitylong/vol=1/pitch=1
+[ADD]staticelectricityshort : staticelectricityshort/vol=1/pitch=1
