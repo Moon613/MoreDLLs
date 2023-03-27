@@ -3,6 +3,7 @@ bin/
 game/
 lib/
 .vs/
+.vscode/
 build/
 
 .fake
