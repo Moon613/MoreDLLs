@@ -1,0 +1,8 @@
+obj/
+bin/
+game/
+lib/
+.vs/
+build/
+
+.fake
