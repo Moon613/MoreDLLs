@@ -80,120 +80,51 @@ static class ZapHooks
                         self.room.AddObject(new Spark((self as Tentacle).Tip.pos + a * 9f, a * Mathf.Lerp(6f, 18f, Random.value), Color.white, null, 20, 30));
                     }
                 }
-            }
-            customStuff.TryGetValue(self.daddy, out var something);
-            if (Random.Range(0,(MoreDlls.staticOptions.poleZapFrequency.Value*10)+1) == MoreDlls.staticOptions.poleZapFrequency.Value*10 && MoreDlls.staticOptions.allowPoleZaps.Value)
-            {
-                if (self.room.GetTile((self as Tentacle).Tip.pos).horizontalBeam)
+                customStuff.TryGetValue(self.daddy, out var something);
+                if (Random.Range(0,(MoreDlls.staticOptions.poleZapFrequency.Value*10)+1) == MoreDlls.staticOptions.poleZapFrequency.Value*10 && MoreDlls.staticOptions.allowPoleZaps.Value && self != null)
                 {
-                    Vector2 tenticlePos = (self as Tentacle).Tip.pos;
-                    Vector2 a = Custom.DegToVec(360f * Random.value);
-                    //Debug.Log("Values before for loop");
-                    //Debug.Log(something.maxZapxReached);
-                    //Debug.Log(something.minZapxReached);
-                    for (int i = 1; i <= MoreDlls.staticOptions.poleShockRangeX.Value+1; i++)
+                    if (self.room.GetTile((self as Tentacle).Tip.pos).horizontalBeam)
                     {
-                        //Debug.Log("Values while in loop");
-                        //Debug.Log(i);
+                        Vector2 tenticlePos = (self as Tentacle).Tip.pos;
+                        Vector2 a = Custom.DegToVec(360f * Random.value);
+                        //Debug.Log("Values before for loop");
                         //Debug.Log(something.maxZapxReached);
                         //Debug.Log(something.minZapxReached);
-                        if (!something.maxZapxReached)
+                        for (int i = 1; i <= MoreDlls.staticOptions.poleShockRangeX.Value+1; i++)
                         {
-                            if (!self.room.GetTile(tenticlePos + new Vector2(i,0)).horizontalBeam || i == MoreDlls.staticOptions.poleShockRangeX.Value+1)
+                            //Debug.Log("Values while in loop");
+                            //Debug.Log(i);
+                            //Debug.Log(something.maxZapxReached);
+                            //Debug.Log(something.minZapxReached);
+                            if (!something.maxZapxReached)
                             {
-                                something.maxZapx = tenticlePos.x + i;
-                                something.maxZapxReached = true;
-                            }
-                            else if (i%100 == 0f)
-                            {
-                                self.room.PlaySound(StaticElectricityEnums.StaticElectricity, tenticlePos + new Vector2(i,0), 0.15f, 0.75f);
-                                self.room.AddObject(new Spark((tenticlePos + new Vector2(i,0)) + a * 9f, a * Mathf.Lerp(6f, 18f, Random.value), Color.white, null, 20, 30));
-                                self.room.AddObject(new Spark((tenticlePos + new Vector2(i,0)) + a * 9f, a * Mathf.Lerp(6f, 18f, Random.value), Color.white, null, 20, 30));
-                            }
-                        }
-                        //Debug.Log("Before min for loop");
-                        if (!something.minZapxReached)
-                        {
-                            //Debug.Log("Made it in min loop");
-                            if (!self.room.GetTile(tenticlePos - new Vector2(i,0)).horizontalBeam || i == MoreDlls.staticOptions.poleShockRangeX.Value+1)
-                            {
-                                something.minZapx = tenticlePos.x + -i;
-                                something.minZapxReached = true;
-                                //Debug.Log(something.minZapx);
-                            }
-                            else if (i%100 == 0f)
-                            {
-                                self.room.PlaySound(StaticElectricityEnums.StaticElectricity, tenticlePos + new Vector2(-i,0), 0.15f, 0.75f);
-                                self.room.AddObject(new Spark((tenticlePos + new Vector2(-i,0)) + a * 9f, a * Mathf.Lerp(6f, 18f, Random.value), Color.white, null, 20, 30));
-                                self.room.AddObject(new Spark((tenticlePos + new Vector2(-i,0)) + a * 9f, a * Mathf.Lerp(6f, 18f, Random.value), Color.white, null, 20, 30));
-                            }
-                        }
-                    }
-                    foreach (var creature in self.room.abstractRoom.creatures)
-                    {
-                        if (creature.realizedCreature != self.daddy)
-                        {
-                            //Debug.Log("Is creature in shock range X?");
-                            //Debug.Log(something.minZapx < creature.realizedCreature.mainBodyChunk.pos.x && creature.realizedCreature.mainBodyChunk.pos.x < something.maxZapx);
-                            //Debug.Log("Is creature in shock range Y?");
-                            //Debug.Log(tenticlePos.y-10 <= creature.realizedCreature.mainBodyChunk.pos.y && creature.realizedCreature.mainBodyChunk.pos.y <= tenticlePos.y+10);
-                            if ((something.minZapx < creature.realizedCreature.mainBodyChunk.pos.x && creature.realizedCreature.mainBodyChunk.pos.x < something.maxZapx) && (tenticlePos.y-10 <= creature.realizedCreature.mainBodyChunk.pos.y && creature.realizedCreature.mainBodyChunk.pos.y <= tenticlePos.y+10))
-                            {
-                                creature.realizedCreature.stun = 50;
-                                self.room.AddObject(new Explosion.ExplosionLight(creature.realizedCreature.mainBodyChunk.pos, 100f, 1f, 2, new Color(0.7f, 1f, 0.9f)));
-                                //Debug.Log("The Zappening Worked!");
-                                //Debug.Log(creature.realizedCreature);
-                            }
-                            //Debug.Log("Creature Chunk Here");
-                            //Debug.Log("Creature position");
-                            //Debug.Log(creature.realizedCreature.mainBodyChunk.pos.x);
-                            //Debug.Log(creature.realizedCreature.mainBodyChunk.pos.y);
-                        }
-                    }
-                    //Debug.Log("Constraints here (The first two numbers, x & y respactivly, should fit between the groups of two numbers here, first 2 for x, second for y)");
-                    //Debug.Log(something.maxZapx);
-                    //Debug.Log(something.minZapx);
-                    //Debug.Log(tenticlePos.y-5);
-                    //Debug.Log(tenticlePos.y+5);
-                    something.maxZapxReached = false;
-                    something.minZapxReached = false;
-                    something.maxZapx = 0;
-                    something.minZapx = 0;
-                }
-                if (self.room.GetTile((self as Tentacle).Tip.pos).verticalBeam)
-                {
-                    Vector2 tenticlePos = (self as Tentacle).Tip.pos;
-                    Vector2 a = Custom.DegToVec(360f * Random.value);
-                    if (true)
-                    {
-                        for (int i = 1; i <= MoreDlls.staticOptions.poleShockRangeY.Value+1; i++)
-                        {
-                            if (!something.maxZapyReached)
-                            {
-                                if (!self.room.GetTile(tenticlePos + new Vector2(0,i)).verticalBeam || i == MoreDlls.staticOptions.poleShockRangeY.Value+1)
+                                if (!self.room.GetTile(tenticlePos + new Vector2(i,0)).horizontalBeam || i == MoreDlls.staticOptions.poleShockRangeX.Value+1)
                                 {
-                                    something.maxZapyReached = true;
-                                    something.maxZapy = tenticlePos.y + i;
+                                    something.maxZapx = tenticlePos.x + i;
+                                    something.maxZapxReached = true;
                                 }
-                                else if (i%57 == 0f)
+                                else if (i%100 == 0f)
                                 {
-                                    self.room.PlaySound(StaticElectricityEnums.StaticElectricity, tenticlePos + new Vector2(0,i), 0.15f, 0.75f);
-                                    self.room.AddObject(new Spark((tenticlePos + new Vector2(0,i)) + a * 9f, a * Mathf.Lerp(6f, 18f, Random.value), Color.white, null, 20, 30));
-                                    self.room.AddObject(new Spark((tenticlePos + new Vector2(0,i)) + a * 9f, a * Mathf.Lerp(6f, 18f, Random.value), Color.white, null, 20, 30));
+                                    self.room.PlaySound(StaticElectricityEnums.StaticElectricity, tenticlePos + new Vector2(i,0), 0.15f, 0.75f);
+                                    self.room.AddObject(new Spark((tenticlePos + new Vector2(i,0)) + a * 9f, a * Mathf.Lerp(6f, 18f, Random.value), Color.white, null, 20, 30));
+                                    self.room.AddObject(new Spark((tenticlePos + new Vector2(i,0)) + a * 9f, a * Mathf.Lerp(6f, 18f, Random.value), Color.white, null, 20, 30));
                                 }
                             }
-                            if (!something.minZapyReached)
+                            //Debug.Log("Before min for loop");
+                            if (!something.minZapxReached)
                             {
-                                if (!self.room.GetTile(tenticlePos + new Vector2(0,-i)).verticalBeam || i == MoreDlls.staticOptions.poleShockRangeY.Value+1)
+                                //Debug.Log("Made it in min loop");
+                                if (!self.room.GetTile(tenticlePos - new Vector2(i,0)).horizontalBeam || i == MoreDlls.staticOptions.poleShockRangeX.Value+1)
                                 {
-                                    something.minZapyReached = true;
-                                    something.minZapy = tenticlePos.y + -i;
+                                    something.minZapx = tenticlePos.x + -i;
+                                    something.minZapxReached = true;
+                                    //Debug.Log(something.minZapx);
                                 }
-                                else if (i%57 == 0f)
+                                else if (i%100 == 0f)
                                 {
-                                    self.room.PlaySound(StaticElectricityEnums.StaticElectricity, tenticlePos + new Vector2(0,-i), 0.15f, 0.75f);
-                                    self.room.AddObject(new Spark((tenticlePos + new Vector2(0,-i)) + a * 9f, a * Mathf.Lerp(6f, 18f, Random.value), Color.white, null, 20, 30));
-                                    self.room.AddObject(new Spark((tenticlePos + new Vector2(0,-i)) + a * 9f, a * Mathf.Lerp(6f, 18f, Random.value), Color.white, null, 20, 30));
+                                    self.room.PlaySound(StaticElectricityEnums.StaticElectricity, tenticlePos + new Vector2(-i,0), 0.15f, 0.75f);
+                                    self.room.AddObject(new Spark((tenticlePos + new Vector2(-i,0)) + a * 9f, a * Mathf.Lerp(6f, 18f, Random.value), Color.white, null, 20, 30));
+                                    self.room.AddObject(new Spark((tenticlePos + new Vector2(-i,0)) + a * 9f, a * Mathf.Lerp(6f, 18f, Random.value), Color.white, null, 20, 30));
                                 }
                             }
                         }
@@ -201,23 +132,92 @@ static class ZapHooks
                         {
                             if (creature.realizedCreature != self.daddy)
                             {
-                                if ((something.minZapy < creature.realizedCreature.mainBodyChunk.pos.y && creature.realizedCreature.mainBodyChunk.pos.y < something.maxZapy) && (tenticlePos.x-10 <= creature.realizedCreature.mainBodyChunk.pos.x && creature.realizedCreature.mainBodyChunk.pos.x <= tenticlePos.x+10))
+                                //Debug.Log("Is creature in shock range X?");
+                                //Debug.Log(something.minZapx < creature.realizedCreature.mainBodyChunk.pos.x && creature.realizedCreature.mainBodyChunk.pos.x < something.maxZapx);
+                                //Debug.Log("Is creature in shock range Y?");
+                                //Debug.Log(tenticlePos.y-10 <= creature.realizedCreature.mainBodyChunk.pos.y && creature.realizedCreature.mainBodyChunk.pos.y <= tenticlePos.y+10);
+                                if ((something.minZapx < creature.realizedCreature.mainBodyChunk.pos.x && creature.realizedCreature.mainBodyChunk.pos.x < something.maxZapx) && (tenticlePos.y-10 <= creature.realizedCreature.mainBodyChunk.pos.y && creature.realizedCreature.mainBodyChunk.pos.y <= tenticlePos.y+10))
                                 {
-                                    //self.room.AddObject(new CreatureSpasmer(creature.realizedCreature, false, creature.realizedCreature.stun));
                                     creature.realizedCreature.stun = 50;
-                                    self.room.AddObject(new Explosion.ExplosionLight(creature.realizedCreature.mainBodyChunk.pos, 200f, 1f, 4, new Color(0.7f, 1f, 1f)));
+                                    self.room.AddObject(new Explosion.ExplosionLight(creature.realizedCreature.mainBodyChunk.pos, 100f, 1f, 2, new Color(0.7f, 1f, 0.9f)));
                                     //Debug.Log("The Zappening Worked!");
                                     //Debug.Log(creature.realizedCreature);
                                 }
                                 //Debug.Log("Creature Chunk Here");
+                                //Debug.Log("Creature position");
                                 //Debug.Log(creature.realizedCreature.mainBodyChunk.pos.x);
                                 //Debug.Log(creature.realizedCreature.mainBodyChunk.pos.y);
                             }
                         }
-                        something.maxZapyReached = false;
-                        something.minZapyReached = false;
-                        something.maxZapy = 0;
-                        something.minZapy = 0;
+                        //Debug.Log("Constraints here (The first two numbers, x & y respactivly, should fit between the groups of two numbers here, first 2 for x, second for y)");
+                        //Debug.Log(something.maxZapx);
+                        //Debug.Log(something.minZapx);
+                        //Debug.Log(tenticlePos.y-5);
+                        //Debug.Log(tenticlePos.y+5);
+                        something.maxZapxReached = false;
+                        something.minZapxReached = false;
+                        something.maxZapx = 0;
+                        something.minZapx = 0;
+                    }
+                    if (self.room.GetTile((self as Tentacle).Tip.pos).verticalBeam)
+                    {
+                        Vector2 tenticlePos = (self as Tentacle).Tip.pos;
+                        Vector2 a = Custom.DegToVec(360f * Random.value);
+                        if (true)
+                        {
+                            for (int i = 1; i <= MoreDlls.staticOptions.poleShockRangeY.Value+1; i++)
+                            {
+                                if (!something.maxZapyReached)
+                                {
+                                    if (!self.room.GetTile(tenticlePos + new Vector2(0,i)).verticalBeam || i == MoreDlls.staticOptions.poleShockRangeY.Value+1)
+                                    {
+                                        something.maxZapyReached = true;
+                                        something.maxZapy = tenticlePos.y + i;
+                                    }
+                                    else if (i%57 == 0f)
+                                    {
+                                        self.room.PlaySound(StaticElectricityEnums.StaticElectricity, tenticlePos + new Vector2(0,i), 0.15f, 0.75f);
+                                        self.room.AddObject(new Spark((tenticlePos + new Vector2(0,i)) + a * 9f, a * Mathf.Lerp(6f, 18f, Random.value), Color.white, null, 20, 30));
+                                        self.room.AddObject(new Spark((tenticlePos + new Vector2(0,i)) + a * 9f, a * Mathf.Lerp(6f, 18f, Random.value), Color.white, null, 20, 30));
+                                    }
+                                }
+                                if (!something.minZapyReached)
+                                {
+                                    if (!self.room.GetTile(tenticlePos + new Vector2(0,-i)).verticalBeam || i == MoreDlls.staticOptions.poleShockRangeY.Value+1)
+                                    {
+                                        something.minZapyReached = true;
+                                        something.minZapy = tenticlePos.y + -i;
+                                    }
+                                    else if (i%57 == 0f)
+                                    {
+                                        self.room.PlaySound(StaticElectricityEnums.StaticElectricity, tenticlePos + new Vector2(0,-i), 0.15f, 0.75f);
+                                        self.room.AddObject(new Spark((tenticlePos + new Vector2(0,-i)) + a * 9f, a * Mathf.Lerp(6f, 18f, Random.value), Color.white, null, 20, 30));
+                                        self.room.AddObject(new Spark((tenticlePos + new Vector2(0,-i)) + a * 9f, a * Mathf.Lerp(6f, 18f, Random.value), Color.white, null, 20, 30));
+                                    }
+                                }
+                            }
+                            foreach (var creature in self.room.abstractRoom.creatures)
+                            {
+                                if (creature.realizedCreature != self.daddy)
+                                {
+                                    if ((something.minZapy < creature.realizedCreature.mainBodyChunk.pos.y && creature.realizedCreature.mainBodyChunk.pos.y < something.maxZapy) && (tenticlePos.x-10 <= creature.realizedCreature.mainBodyChunk.pos.x && creature.realizedCreature.mainBodyChunk.pos.x <= tenticlePos.x+10))
+                                    {
+                                        //self.room.AddObject(new CreatureSpasmer(creature.realizedCreature, false, creature.realizedCreature.stun));
+                                        creature.realizedCreature.stun = 50;
+                                        self.room.AddObject(new Explosion.ExplosionLight(creature.realizedCreature.mainBodyChunk.pos, 200f, 1f, 4, new Color(0.7f, 1f, 1f)));
+                                        //Debug.Log("The Zappening Worked!");
+                                        //Debug.Log(creature.realizedCreature);
+                                    }
+                                    //Debug.Log("Creature Chunk Here");
+                                    //Debug.Log(creature.realizedCreature.mainBodyChunk.pos.x);
+                                    //Debug.Log(creature.realizedCreature.mainBodyChunk.pos.y);
+                                }
+                            }
+                            something.maxZapyReached = false;
+                            something.minZapyReached = false;
+                            something.maxZapy = 0;
+                            something.minZapy = 0;
+                        }
                     }
                 }
             }
