@@ -28,6 +28,7 @@ public class MoreDlls : BaseUnityPlugin
     {
         Content.Register(new ExplosiveDllCritob());
         Content.Register(new ZapDllCritob());
+        Content.Register(new RadioDllCritob());
         StaticElectricityEnums.RegisterValues();
         //On.Player.AddFood += PlayerAddFoodHook;
         On.WorldLoader.CreatureTypeFromString += WorldLoader_CreatureTypeFromString;

@@ -6,19 +6,20 @@ using static PathCost.Legality;
 using UnityEngine;
 using DevInterface;
 using RWCustom;
+using Fisobs.Properties;
 
 namespace MoreDlls;
 
-sealed class ZapDllCritob : Critob
+sealed class RadioDllCritob : Critob
 {
-    public ZapDllCritob() : base(CreatureTemplateType.ZapDaddyLongLegs)
+    public RadioDllCritob() : base(CreatureTemplateType.RadioDaddyLongLegs)
     {
-        Icon = new SimpleIcon("Kill_Daddy", Color.cyan);
-        RegisterUnlock(KillScore.Configurable(25), SandboxUnlockID.ZapDaddyLongLegs);
+        Icon = new SimpleIcon("Kill_Daddy", new Color(1f, 168f/255f, 12f/255f));
+        RegisterUnlock(KillScore.Configurable(25), SandboxUnlockID.RadioDaddyLongLegs);
         SandboxPerformanceCost = new(3f, 1.5f);
         LoadedPerformanceCost = 200f;
         ShelterDanger = ShelterDanger.Hostile;
-        ZapHooks.Apply();
+        //RadioHooks.Apply();
     }
 
     public override void ConnectionIsAllowed(AImap map, MovementConnection connection, ref bool? allow)
@@ -41,59 +42,62 @@ sealed class ZapDllCritob : Critob
 
     public override void TileIsAllowed(AImap map, IntVector2 tilePos, ref bool? allow) => allow = map.getAItile(tilePos).terrainProximity > 1;
 
-    public override int ExpeditionScore() => 35;
+    public override int ExpeditionScore() => 20;
 
-    public override Color DevtoolsMapColor(AbstractCreature acrit) => Color.cyan;
+    public override Color DevtoolsMapColor(AbstractCreature acrit) => new Color(1f, 168f/255f, 12f/255f);
 
-    public override string DevtoolsMapName(AbstractCreature acrit) => "zll";
+    public override string DevtoolsMapName(AbstractCreature acrit) => "rll";
 
     public override IEnumerable<RoomAttractivenessPanel.Category> DevtoolsRoomAttraction() => new[] { RoomAttractivenessPanel.Category.LikesInside };
 
-    public override IEnumerable<string> WorldFileAliases() => new[] { "zapdll" };
+    public override IEnumerable<string> WorldFileAliases() => new[] { "radiodll" };
 
     public override CreatureTemplate CreateTemplate()
     {
-        var t = new CreatureFormula(CreatureTemplate.Type.DaddyLongLegs, Type, "ZapDll")
+        var t = new CreatureFormula(CreatureTemplate.Type.DaddyLongLegs, Type, "RadioDll")
         {
             TileResistances = new()
             {
-                Air = new(1f, Allowed),
-                //Floor = new(0.0f, Allowed),
-                //Solid = new(0.0f, Allowed),
-                //Wall = new(0.0f, Allowed),
-                //Corridor = new(0.0f, Allowed),
-                //Climb = new(0.0f, Allowed),
-                //Ceiling = new(0.0f, Allowed)
+                Air = new(1f, Allowed)
             },
             ConnectionResistances = new() 
             {
                 Standard = new(1f, Allowed),
                 ShortCut = new(1f, Allowed),
-                BigCreatureShortCutSqueeze = new(10f, Allowed),
+                BigCreatureShortCutSqueeze = new(0f, Allowed),
                 OffScreenMovement = new(1f, Allowed),
-                BetweenRooms = new(10f, Allowed)
+                BetweenRooms = new(0f, Allowed)
             },
             DefaultRelationship = new(CreatureTemplate.Relationship.Type.Eats, 1f),
-            DamageResistances = new() { Base = 175f, Electric = .2f },
-            StunResistances = new() { Base = 200f , Electric = 1f},
+            DamageResistances = new() { Base = 50f},
+            StunResistances = new() { Base = 150f},
             HasAI = true,
-            Pathing = PreBakedPathing.Ancestral(CreatureTemplate.Type.DaddyLongLegs),
+            Pathing = PreBakedPathing.Ancestral(CreatureTemplate.Type.DaddyLongLegs)
         }.IntoTemplate();
+        t.shortcutColor = new Color(1f, 168f/255f, 12f/255f);
         return t;
     }
 
     public override void EstablishRelationships()
     {
-        var daddy = new Relationships(Type);
-        daddy.Ignores(Type);
-        daddy.Eats(CreatureTemplateType.RadioDaddyLongLegs, 100f);
+        Relationships daddy = new Relationships(this.Type);
+        daddy.IsInPack(this.Type, 1f);
+        daddy.EatenBy(CreatureTemplateType.ZapDaddyLongLegs, 0.95f);
+        //daddy.HasDynamicRelationship(CreatureTemplate.Type.Slugcat, 200f);
     }
 
     public override ArtificialIntelligence CreateRealizedAI(AbstractCreature acrit) => new DaddyAI(acrit, acrit.world);
 
-    public override Creature CreateRealizedCreature(AbstractCreature acrit) => new DaddyLongLegs(acrit, acrit.world);
+    public override Creature CreateRealizedCreature(AbstractCreature acrit) => new RadioLongLegs(acrit, acrit.world);
 
-    public override CreatureState CreateState(AbstractCreature acrit) => new DaddyLongLegs.DaddyState(acrit);
+    public override CreatureState CreateState(AbstractCreature acrit) => new RadioLongLegs.DaddyState(acrit);
+    public override ItemProperties? Properties(Creature crit)
+    {
+        if (crit is RadioLongLegs radiodll) {
+            return new RadioProperties(radiodll);
+        }
+        return null;
+    }
 
     public override void LoadResources(RainWorld rainWorld) { }
 

@@ -15,7 +15,7 @@ namespace MoreDlls;
 
 static class ZapHooks
 {
-    public static ConditionalWeakTable<DaddyLongLegs, DLLColor> customStuff = new();
+    public static ConditionalWeakTable<DaddyLongLegs, DLLValues> customStuff = new();
     internal static void Apply()
     {
         
@@ -231,7 +231,7 @@ static class ZapHooks
                 var state = Random.state;
                 Random.InitState(self.abstractCreature.ID.RandomSeed);
                 Random.state = state;
-                customStuff.Add(self, new DLLColor());
+                customStuff.Add(self, new DLLValues());
                 customStuff.TryGetValue(self, out var something);
                 float randNumColor = Random.Range(0,101);
                 //Use this line for testing the albino color
@@ -309,8 +309,8 @@ static class ZapHooks
                     something.coreZapCooldown = 80;
                     flag = false;
                 }
-                self.eyeColor = new Color(0.098f, (1/15*something.initialGColor)*Mathf.Sin(0.5f*something.x)+Random.Range(0.25f,0.89f), (1/15*something.initialGColor)*Mathf.Sin(0.5f*something.x)+Random.Range(0.26f,0.9f));
-                something.x += 0.1f;
+                self.eyeColor = new Color(0.098f, (1/15*something.initialGColor)*Mathf.Sin(0.5f*something.t)+Random.Range(0.25f,0.89f), (1/15*something.initialGColor)*Mathf.Sin(0.5f*something.t)+Random.Range(0.26f,0.9f));
+                something.t += 0.1f;
             }
         };
     }

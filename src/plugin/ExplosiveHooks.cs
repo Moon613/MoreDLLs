@@ -14,14 +14,14 @@ namespace MoreDlls;
 
 public class ExplosiveHooks
 {
-    public static ConditionalWeakTable<DaddyLongLegs, DLLColor> customStuff = new();
+    public static ConditionalWeakTable<DaddyLongLegs, DLLValues> customStuff = new();
     internal static void Apply()
     {
         
         //When adding new creatures, make sure to continue the or statement change in these hooks
         On.ArenaCreatureSpawner.IsMajorCreature += (orig, type) => type == CreatureTemplateType.ExplosiveDaddyLongLegs || type == CreatureTemplateType.ZapDaddyLongLegs || orig(type);
 
-        new Hook(typeof(DaddyLongLegs).GetMethod("get_SizeClass", Public | NonPublic | Instance), (Func<DaddyLongLegs, bool> orig, DaddyLongLegs self) => self.Template.type == CreatureTemplateType.ExplosiveDaddyLongLegs || self.Template.type == CreatureTemplateType.ZapDaddyLongLegs || orig(self));
+        new Hook(typeof(DaddyLongLegs).GetMethod("get_SizeClass", Public | NonPublic | Instance), (Func<DaddyLongLegs, bool> orig, DaddyLongLegs self) => self.Template.type == CreatureTemplateType.ExplosiveDaddyLongLegs || orig(self));
 
         IL.DaddyLongLegs.Act += il =>
         {
@@ -150,7 +150,7 @@ public class ExplosiveHooks
                 var state = Random.state;
                 Random.InitState(self.abstractCreature.ID.RandomSeed);
                 Random.state = state;
-                customStuff.Add(self, new DLLColor());
+                customStuff.Add(self, new DLLValues());
                 customStuff.TryGetValue(self, out var something);
                 float randNumColor = Random.Range(0,101);
                 //Use this line for testing the albino color
@@ -175,10 +175,6 @@ public class ExplosiveHooks
                     }*/
                 }
                 
-            }
-            else if (self.Template.type == CreatureTemplateType.ZapDaddyLongLegs)
-            {
-                customStuff.Add(self, new DLLColor());
             }
         };
 
@@ -216,16 +212,12 @@ public class ExplosiveHooks
                 {
                     something.grabDecisionCooldown -= 1;
                 }
-                self.eyeColor = new Color(((Mathf.Sin((something.x/2) - ((1.25f*Mathf.PI)/2))+6.75f)/(Random.Range(7,10)+3*something.initialRColor)), ((Mathf.Sin((something.x/2) - (Mathf.PI/2))+1)/(Random.Range(8,11)+3*something.initialGColor)), 0f);
+                self.eyeColor = new Color(((Mathf.Sin((something.t/2) - ((1.25f*Mathf.PI)/2))+6.75f)/(Random.Range(7,10)+3*something.initialRColor)), ((Mathf.Sin((something.t/2) - (Mathf.PI/2))+1)/(Random.Range(8,11)+3*something.initialGColor)), 0f);
                 /*if (something.eyecolor == 2)
                 {
                     self.eyeColor = new Color(((Mathf.Sin((1.5f*something.x) - ((3*Mathf.PI)/2))+6.75f)/(Random.Range(7,10)+3*something.initialRColor)), ((Mathf.Sin((3*something.x) - (Mathf.PI/2))+5)/(Random.Range(8,11)+3*something.initialGColor)), 0f);
                 }*/
-                something.x += 0.1f;
-            }
-            if (self.Template.type == CreatureTemplateType.ZapDaddyLongLegs)
-            {
-                self.eyeColor = new Color(0.098f, 0.94117f, 0.94509f);
+                something.t += 0.1f;
             }
         };
     }
