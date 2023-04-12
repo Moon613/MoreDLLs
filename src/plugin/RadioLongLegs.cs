@@ -14,14 +14,19 @@ using System.Linq;
 public class RadioLongLegs : DaddyLongLegs, IPlayerEdible
 {
     public int bites;
+    public int foodPoints;
+    public int eatenFoodPoints;
     public bool albino;
     public float initialRColor;
     public float initialGColor;
     public float initialBColor;
     public float colorTimer;
+    public FSprite[] bulbSprites;
     public RadioLongLegs(AbstractCreature abstractCreature, World world) : base(abstractCreature, world)
     {
         this.bites = 3;
+        this.eatenFoodPoints = 0;
+        this.bulbSprites = new FSprite[0];
         Random.State state = Random.state;
         Random.InitState(this.abstractCreature.ID.RandomSeed);
         Random.state = state;
@@ -62,6 +67,7 @@ public class RadioLongLegs : DaddyLongLegs, IPlayerEdible
         }
         this.bodyChunks = this.bodyChunks.Where(c => c != null).ToArray();
         this.bodyChunkConnections = this.bodyChunkConnections.Where(c => c != null).ToArray();
+        this.foodPoints = this.bodyChunks.Length;
     }
     public override void Update(bool eu)
     {
@@ -69,10 +75,17 @@ public class RadioLongLegs : DaddyLongLegs, IPlayerEdible
         this.eyeColor = new Color(0.1f*Mathf.Cos(this.colorTimer/2f)+0.86f - this.initialRColor/15f, 0.06f*Mathf.Cos(this.colorTimer/2)+0.74f - this.initialGColor/15f, 0.03f*Mathf.Cos(this.colorTimer/3.5f)+0.39f - this.initialBColor/15f);
         this.colorTimer += 0.1f;
     }
+	public override void InitiateGraphicsModule()
+	{
+		if (base.graphicsModule == null)
+		{
+			base.graphicsModule = new RadioGraphics(this);
+		}
+	}
     public void BitByPlayer(Creature.Grasp grasp, bool eu)
     {
         this.bites--;
-        this.Die();
+        //this.Die();
         this.room.PlaySound((this.bites == 0) ? SoundID.Slugcat_Eat_Centipede : SoundID.Slugcat_Bite_Centipede, base.mainBodyChunk.pos);
         base.firstChunk.MoveFromOutsideMyUpdate(eu, grasp.grabber.mainBodyChunk.pos);
         if (this.bites < 1)
@@ -112,7 +125,7 @@ public class RadioLongLegs : DaddyLongLegs, IPlayerEdible
             if (this.grabbedBy[0].grabber.GetType().Name == MoreSlugcatsEnums.SlugcatStatsName.Saint.ToString()) {
                 return -1;
             } else {
-                return this.bodyChunks.Length;
+                return this.foodPoints;
             }
         }
     }

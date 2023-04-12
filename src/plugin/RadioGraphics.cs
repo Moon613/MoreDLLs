@@ -34,8 +34,8 @@ public class RadioGraphics : DaddyGraphics
         else if (!this.daddy.albino)
         {
             float baseRed = 0f, baseGreen = 0f, baseBlue = 0f;
-            baseRed = Random.Range(0.29f, 0.296f);
-            baseGreen = Random.Range(0.19f, 0.2016f);
+            baseRed = Random.Range(0.28f, 0.29f);
+            baseGreen = Random.Range(0.14f, 0.1516f);
             baseBlue = Random.Range(0.037f, 0.0419f);
             palette.blackColor = new Color(baseRed, baseGreen, baseBlue);
         }
@@ -44,10 +44,25 @@ public class RadioGraphics : DaddyGraphics
     public override void DrawSprites(RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam, float timeStacker, Vector2 camPos)
     {
         base.DrawSprites(sLeaser, rCam, timeStacker, camPos);
-        if (this.daddy.bites <= 2) {
-            for (int i = 0; i < sLeaser.sprites.Length; i++) {
+        if (this.daddy.bites == 2) {
+            for (int i = this.EyeSprite(0,0); i < this.EyeSprite(Mathf.RoundToInt(this.daddy.bodyChunks.Length/3),0); i++) {
+                Debug.Log(i);
                 sLeaser.sprites[i].isVisible = false;
             }
+        }
+        else if (this.daddy.bites == 1) {
+            for (int i = this.EyeSprite(0,0); i < this.EyeSprite(Mathf.RoundToInt(this.daddy.bodyChunks.Length*2/3),0); i++) {
+                Debug.Log(i);
+                sLeaser.sprites[i].isVisible = false;
+            }
+        }
+    }
+    public override void InitiateSprites(RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam)
+    {
+        base.InitiateSprites(sLeaser, rCam);
+        for (int i = this.BodySprite(0); i < this.BodySprite(this.daddy.bodyChunks.Length); i++) {
+            Array.Resize(ref this.daddy.bulbSprites, this.daddy.bulbSprites.Length+1);
+            this.daddy.bulbSprites[i] = sLeaser.sprites[i];
         }
     }
 }

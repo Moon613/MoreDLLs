@@ -19,7 +19,7 @@ sealed class RadioDllCritob : Critob
         SandboxPerformanceCost = new(3f, 1.5f);
         LoadedPerformanceCost = 200f;
         ShelterDanger = ShelterDanger.Hostile;
-        //RadioHooks.Apply();
+        RadioHooks.Apply();
     }
 
     public override void ConnectionIsAllowed(AImap map, MovementConnection connection, ref bool? allow)
@@ -83,6 +83,7 @@ sealed class RadioDllCritob : Critob
         Relationships daddy = new Relationships(this.Type);
         daddy.IsInPack(this.Type, 1f);
         daddy.EatenBy(CreatureTemplateType.ZapDaddyLongLegs, 0.95f);
+        daddy.Eats(CreatureTemplate.Type.LizardTemplate, 1f);
         //daddy.HasDynamicRelationship(CreatureTemplate.Type.Slugcat, 200f);
     }
 
