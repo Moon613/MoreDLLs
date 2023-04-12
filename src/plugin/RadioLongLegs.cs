@@ -21,12 +21,11 @@ public class RadioLongLegs : DaddyLongLegs, IPlayerEdible
     public float initialGColor;
     public float initialBColor;
     public float colorTimer;
-    public FSprite[] bulbSprites;
+    public float[] initialBulbSizes = new float[0];
     public RadioLongLegs(AbstractCreature abstractCreature, World world) : base(abstractCreature, world)
     {
         this.bites = 3;
         this.eatenFoodPoints = 0;
-        this.bulbSprites = new FSprite[0];
         Random.State state = Random.state;
         Random.InitState(this.abstractCreature.ID.RandomSeed);
         Random.state = state;

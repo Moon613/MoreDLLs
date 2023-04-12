@@ -56,13 +56,16 @@ public class RadioGraphics : DaddyGraphics
                 sLeaser.sprites[i].isVisible = false;
             }
         }
+        for (int i = this.BodySprite(0); i < this.BodySprite(this.daddy.bodyChunks.Length); i++) {
+            sLeaser.sprites[i].scale = this.daddy.initialBulbSizes[i-this.BodySprite(0)] + this.daddy.eatenFoodPoints;
+        }
     }
-    public override void InitiateSprites(RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam)
+    /*public override void InitiateSprites(RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam)
     {
         base.InitiateSprites(sLeaser, rCam);
         for (int i = this.BodySprite(0); i < this.BodySprite(this.daddy.bodyChunks.Length); i++) {
-            Array.Resize(ref this.daddy.bulbSprites, this.daddy.bulbSprites.Length+1);
-            this.daddy.bulbSprites[i] = sLeaser.sprites[i];
+            Array.Resize(ref this.daddy.initialBulbSizes, this.daddy.initialBulbSizes.Length + 1);
+            this.daddy.initialBulbSizes[i] = sLeaser.sprites[i].scale;
         }
-    }
+    }*/
 }

@@ -25,15 +25,12 @@ public class RadioHooks
                     RadioLongLegs myself = self as RadioLongLegs;
                     myself.foodPoints += (self.eatObjects[i].chunk.owner as Creature).State.meatLeft;
                     myself.eatenFoodPoints += (self.eatObjects[i].chunk.owner as Creature).State.meatLeft;
-                    for (int j = 0; j < self.bodyChunks.Length; j++) {
+                    /*for (int j = 0; j < self.bodyChunks.Length; j++) {
                         self.bodyChunks[j].rad += (self.eatObjects[i].chunk.owner as Creature).State.meatLeft;
                     }
                     for (int j = 0; j < self.bodyChunkConnections.Length; j++) {
                         self.bodyChunkConnections[j].distance += (self.eatObjects[i].chunk.owner as Creature).State.meatLeft;
-                    }
-                    for (int j = 0; j < myself.bulbSprites.Length; i++) {
-                        myself.bulbSprites[i].scale += (self.eatObjects[i].chunk.owner as Creature).State.meatLeft;
-                    }
+                    }*/
                 }
             }
         };
