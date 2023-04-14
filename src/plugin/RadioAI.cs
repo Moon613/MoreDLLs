@@ -21,9 +21,10 @@ public class RadioAI : DaddyAI
         this.radioAI = new RadioAIModule(this);
         base.AddModule(radioAI);
         base.AddModule(new NoiseTracker(this, base.tracker));
-        base.noiseTracker.forgetTime = 320;
-        base.noiseTracker.ignoreSeenNoises = false;
-        base.utilityComparer.AddComparedModule(radioAI, null, 1f, 1f);
+        //base.AddModule(new NoiseTracker(this, base.tracker));
+        //base.noiseTracker.forgetTime = 320;
+        //base.noiseTracker.ignoreSeenNoises = false;
+        //base.utilityComparer.AddComparedModule(radioAI, null, 1f, 1f);
         //base.AddModule(new SuperHearing(this, this.tracker, 100f));
     }
     public override PathCost TravelPreference(MovementConnection connection, PathCost cost)
@@ -96,24 +97,35 @@ public class RadioAIModule : AIModule
         //Debug.Log("Is getting updated");
 		for (int j = 0; j < this.pack.members.Count; j++)   //Loops through each member of the surrent pack
 		{
-			if (this.pack.members[j].radiodll.abstractAI.RealAI != null)
+			if (this.pack.members[j].abstRadiodll.abstractAI.RealAI != null)
 			{
-				for (int k = 0; k < this.pack.members[j].radiodll.abstractAI.RealAI.tracker.CreaturesCount; k++)    //Loops through each creature it is keeping track of
+				for (int k = 0; k < this.pack.members[j].abstRadiodll.abstractAI.RealAI.tracker.CreaturesCount; k++)    //Loops through each creature it is keeping track of
 				{
-					if (this.pack.members[j].radiodll.realizedCreature != null && this.pack.members[j].radiodll.realizedCreature.Consious)
+					if (this.pack.members[j].abstRadiodll.realizedCreature != null && this.pack.members[j].abstRadiodll.realizedCreature.Consious)
 					{
-                        Debug.Log("Made it to inner checks, calling PackMemberIsSeeingCreature");
-						this.PackMemberIsSeeingCreature(this.pack.members[j].radiodll.realizedCreature as RadioLongLegs, this.pack.members[j].radiodll.abstractAI.RealAI.tracker.GetRep(k));
+                        //Debug.Log("Made it to inner checks, calling PackMemberIsSeeingCreature");
+						this.PackMemberIsSeeingCreature(this.pack.members[j].abstRadiodll.realizedCreature as RadioLongLegs, this.pack.members[j].abstRadiodll.abstractAI.RealAI.tracker.GetRep(k));
+                        if (this.pack.members[j].abstRadiodll.realizedCreature.room == this.radiodll.room && this.pack.members[j].abstRadiodll.abstractAI.RealAI.noiseTracker != null && this.pack.members[j].abstRadiodll.abstractAI.RealAI.noiseTracker.sources.Count > 0 && this.pack.members[j].abstRadiodll != this.radiodll.abstractCreature)
+                        {
+                            //Debug.Log("Pack member " + this.pack.members[j].radiodll.abstractAI.RealAI.creature.creatureTemplate.type.ToString() + " is recieving info on target creature. It's sources are: " + this.pack.members[j].radiodll.abstractAI.RealAI.noiseTracker.sources[0].creatureRep.representedCreature.type.ToString() + ". And position is: " + this.pack.members[j].radiodll.abstractAI.RealAI.noiseTracker.sources[0].pos.ToString());
+                            this.pack.members[j].abstRadiodll.abstractAI.RealAI.noiseTracker.sources.AddRange(this.radiodll.AI.noiseTracker.sources);
+                            (this.pack.members[j].abstRadiodll.realizedCreature as RadioLongLegs).AI.behavior = DaddyAI.Behavior.ExamineSound;
+                            Debug.Log("Added sources and changed behavior!");
+                            //Debug.Log("Packmember sources are: " + this.pack.members[j].radiodll.abstractAI.RealAI.noiseTracker.sources.ToString());
+                        }
+                        else if (this.pack.members[j].abstRadiodll.realizedCreature.room != this.radiodll.room){
+                            this.pack.members[j].abstRadiodll.abstractAI.RealAI.SetDestination(this.radiodll.abstractCreature.pos);
+                        }
 					}
 				}
-                if (flag && this.pack.members[j].radiodll != this.radiodll.abstractCreature)
+                if (flag && this.pack.members[j].abstRadiodll != this.radiodll.abstractCreature)
                 {
                     //(this.pack.members[j].radiodll.realizedCreature as RadioLongLegs).AI.excitement = 1f;
                     //(this.pack.members[j].radiodll.realizedCreature as RadioLongLegs).AI.runSpeed = 1f;
                     //this.pack.members[j].radiodll.abstractAI.SetDestination(this.radiodll.abstractCreature.pos);
-                    this.pack.members[j].radiodll.abstractAI.RealAI.SetDestination(this.radiodll.abstractCreature.pos);
+                    this.pack.members[j].abstRadiodll.abstractAI.RealAI.SetDestination(this.radiodll.abstractCreature.pos);
                     //this.pack.members[j].radiodll.abstractAI.InternalSetDestination(this.radiodll.abstractCreature.pos);
-                    Debug.Log("Set the target position of " + this.pack.members[j].radiodll.abstractAI.GetType().ToString() + ", pack number: " + j + ", to: " + this.radiodll.abstractCreature.pos.ToString());
+                    Debug.Log("Set the target position of " + this.pack.members[j].abstRadiodll.abstractAI.GetType().ToString() + ", pack number: " + j + ", to: " + this.radiodll.abstractCreature.pos.ToString());
                 }
 			}
 		}
@@ -123,10 +135,10 @@ public class RadioAIModule : AIModule
         if (this.radiodll.AI.behavior == DaddyAI.Behavior.Hunt) {
             Vector2 a = this.radiodll.room.MiddleOfTile(connection.destinationCoord);
             for (int i = 0; i < this.pack.members.Count; i++) {
-                if (this.pack.members[i].radiodll == null || this.pack.members[i].radiodll.slatedForDeletion) {return cost;}
-                if (this.pack.members[i].radiodll != this.radiodll.abstractCreature && this.pack.members[i].radiodll.Room == this.radiodll.room.abstractRoom && this.pack.members[i].radiodll.realizedCreature != null) {
-                    cost.resistance += Mathf.InverseLerp(300f, 0f, Vector2.Distance(a, this.pack.members[i].radiodll.realizedCreature.mainBodyChunk.pos)) * 200f / (float)(this.pack.members.Count - 1);
-                    if (connection.destinationCoord.Tile == this.pack.members[i].radiodll.pos.Tile) {
+                if (this.pack.members[i].abstRadiodll == null || this.pack.members[i].abstRadiodll.slatedForDeletion) {return cost;}
+                if (this.pack.members[i].abstRadiodll != this.radiodll.abstractCreature && this.pack.members[i].abstRadiodll.Room == this.radiodll.room.abstractRoom && this.pack.members[i].abstRadiodll.realizedCreature != null) {
+                    cost.resistance += Mathf.InverseLerp(300f, 0f, Vector2.Distance(a, this.pack.members[i].abstRadiodll.realizedCreature.mainBodyChunk.pos)) * 200f / (float)(this.pack.members.Count - 1);
+                    if (connection.destinationCoord.Tile == this.pack.members[i].abstRadiodll.pos.Tile) {
                         cost.resistance += 300f/ (float)(this.pack.members.Count - 1);
                     }
                 }
@@ -146,13 +158,14 @@ public class RadioAIModule : AIModule
         if (packMember == this.radiodll || rep.representedCreature.realizedCreature == null || !rep.VisualContact) {return;}
         Tracker.CreatureRepresentation creatureRepresentation = this.radiodll.AI.tracker.RepresentationForObject(rep.representedCreature.realizedCreature, false);
         if (creatureRepresentation == null) {
-            Debug.Log("Pack member " + packMember.AI.daddy.Template.type.ToString() + " check IsSeeingCreature");
+            Debug.Log("Pack member " + packMember.AI.daddy.Template.type.ToString() + " check IsSeeingCreature, because it was null previously");
             this.RecieveInfoOnCritter(packMember, rep);
             return;
         }
         if (creatureRepresentation.VisualContact) {return;}
         for (int i = 0; i < rep.representedCreature.realizedCreature.bodyChunks.Length; i++) {
             if (packMember.AI.VisualContact(rep.representedCreature.realizedCreature.bodyChunks[i])) {
+                Debug.Log("Pack member " + packMember.AI.daddy.Template.type.ToString() + " check IsSeeingCreature, because it can see it");
                 this.RecieveInfoOnCritter(packMember, rep);
                 return;
             }
@@ -161,17 +174,6 @@ public class RadioAIModule : AIModule
     public void RecieveInfoOnCritter(RadioLongLegs packMember, Tracker.CreatureRepresentation rep) {
         this.radiodll.AI.tracker.SeeCreature(rep.representedCreature);
         if (packMember.AI.noiseTracker == null) {Debug.Log("packMember AI noiseTracker is null!");}
-        if (packMember.room == this.radiodll.room && packMember.AI.noiseTracker != null)
-        {
-            Debug.Log("Pack member " + packMember.AI.daddy.Template.type.ToString() + " is recieving info on target creature. It's sources are: " + packMember.AI.noiseTracker.sources.ToString() + ". And position is: " + packMember.AI.noiseTracker.sources[0].pos.ToString());
-            packMember.AI.noiseTracker.sources.AddRange(this.radiodll.AI.noiseTracker.sources);
-            packMember.AI.noiseTracker.ignoreSeenNoises = false;
-            packMember.AI.behavior = DaddyAI.Behavior.ExamineSound;
-            Debug.Log("Packmember sources are: " + packMember.AI.noiseTracker.sources.ToString());
-        }
-        else if (packMember.room != this.radiodll.room){
-            packMember.abstractCreature.abstractAI.RealAI.SetDestination(this.radiodll.abstractCreature.pos);
-        }
         this.communicating = Math.Max(this.communicating, Random.Range(3, (int)Mathf.Lerp(3f, 50f, rep.dynamicRelationship.currentRelationship.intensity)));
         (packMember.AI as RadioAI).radioAI.communicating = Math.Max((packMember.AI as RadioAI).radioAI.communicating, Random.Range(3, (int)Mathf.Lerp(3f, 50f, rep.dynamicRelationship.currentRelationship.intensity)));
     }
@@ -198,7 +200,7 @@ public class RadioAIModule : AIModule
         }
         public void RemoveLongLegs(AbstractCreature removeLongLegs) {
             for (int i = this.members.Count - 1; i >= 0; i--) {
-                if (this.members[i].radiodll == removeLongLegs) {
+                if (this.members[i].abstRadiodll == removeLongLegs) {
                     this.members.RemoveAt(i);
                 }
             }
@@ -211,9 +213,9 @@ public class RadioAIModule : AIModule
         public class PackMember
         {
             public PackMember(AbstractCreature radiodll) {
-                this.radiodll = radiodll;
+                this.abstRadiodll = radiodll;
             }
-            public AbstractCreature radiodll;
+            public AbstractCreature abstRadiodll;
         }
     }
 }

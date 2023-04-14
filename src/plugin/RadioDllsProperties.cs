@@ -15,7 +15,7 @@ sealed class RadioProperties : ItemProperties
     public override void Grabability(Player player, ref Player.ObjectGrabability grabability)
     {
         if (radiodll.State.alive) {
-            grabability = Player.ObjectGrabability.BigOneHand;
+            grabability = Player.ObjectGrabability.TwoHands;
         } else {
             grabability = Player.ObjectGrabability.Drag;
         }

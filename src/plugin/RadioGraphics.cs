@@ -11,6 +11,8 @@ using RWCustom;
 using Random = UnityEngine.Random;
 using System.Linq;
 
+namespace MoreDlls;
+
 public class RadioGraphics : DaddyGraphics
 {
     public RadioGraphics(PhysicalObject ow) : base(ow)
