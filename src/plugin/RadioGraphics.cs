@@ -17,7 +17,7 @@ public class RadioGraphics : DaddyGraphics
     {
 
     }
-    public RadioLongLegs daddy
+    public new RadioLongLegs daddy
     {
         get
         {
@@ -34,8 +34,8 @@ public class RadioGraphics : DaddyGraphics
         else if (!this.daddy.albino)
         {
             float baseRed = 0f, baseGreen = 0f, baseBlue = 0f;
-            baseRed = Random.Range(0.28f, 0.29f);
-            baseGreen = Random.Range(0.14f, 0.1516f);
+            baseRed = Random.Range(0.3f, 0.31f);
+            baseGreen = Random.Range(0.15f, 0.1616f);
             baseBlue = Random.Range(0.037f, 0.0419f);
             palette.blackColor = new Color(baseRed, baseGreen, baseBlue);
         }
@@ -56,9 +56,9 @@ public class RadioGraphics : DaddyGraphics
                 sLeaser.sprites[i].isVisible = false;
             }
         }
-        for (int i = this.BodySprite(0); i < this.BodySprite(this.daddy.bodyChunks.Length); i++) {
+        /*for (int i = this.BodySprite(0); i < this.BodySprite(this.daddy.bodyChunks.Length); i++) {
             sLeaser.sprites[i].scale = this.daddy.initialBulbSizes[i-this.BodySprite(0)] + this.daddy.eatenFoodPoints;
-        }
+        }*/
     }
     /*public override void InitiateSprites(RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam)
     {

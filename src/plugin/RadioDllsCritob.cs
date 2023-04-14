@@ -40,7 +40,11 @@ sealed class RadioDllCritob : Critob
         }
     }
 
-    public override void TileIsAllowed(AImap map, IntVector2 tilePos, ref bool? allow) => allow = map.getAItile(tilePos).terrainProximity > 1;
+    public override void TileIsAllowed(AImap map, IntVector2 tilePos, ref bool? allow) {
+        allow = map.getAItile(tilePos).terrainProximity > 1;
+        allow &= map.IsFreeSpace(tilePos, tilesOfFreeSpace: 1);
+        allow |= map.room.GetTile(tilePos).Terrain == Room.Tile.TerrainType.ShortcutEntrance;
+    }
 
     public override int ExpeditionScore() => 20;
 
@@ -48,7 +52,7 @@ sealed class RadioDllCritob : Critob
 
     public override string DevtoolsMapName(AbstractCreature acrit) => "rll";
 
-    public override IEnumerable<RoomAttractivenessPanel.Category> DevtoolsRoomAttraction() => new[] { RoomAttractivenessPanel.Category.LikesInside };
+    public override IEnumerable<RoomAttractivenessPanel.Category> DevtoolsRoomAttraction() => new[] { RoomAttractivenessPanel.Category.LikesInside, RoomAttractivenessPanel.Category.All };
 
     public override IEnumerable<string> WorldFileAliases() => new[] { "radiodll" };
 
@@ -63,14 +67,14 @@ sealed class RadioDllCritob : Critob
             ConnectionResistances = new() 
             {
                 Standard = new(1f, Allowed),
-                ShortCut = new(1f, Allowed),
+                ShortCut = new(0f, Allowed),
                 BigCreatureShortCutSqueeze = new(0f, Allowed),
                 OffScreenMovement = new(1f, Allowed),
                 BetweenRooms = new(0f, Allowed)
             },
             DefaultRelationship = new(CreatureTemplate.Relationship.Type.Eats, 1f),
             DamageResistances = new() { Base = 50f},
-            StunResistances = new() { Base = 150f},
+            StunResistances = new() { Base = 25f},
             HasAI = true,
             Pathing = PreBakedPathing.Ancestral(CreatureTemplate.Type.DaddyLongLegs)
         }.IntoTemplate();
@@ -83,11 +87,10 @@ sealed class RadioDllCritob : Critob
         Relationships daddy = new Relationships(this.Type);
         daddy.IsInPack(this.Type, 1f);
         daddy.EatenBy(CreatureTemplateType.ZapDaddyLongLegs, 0.95f);
-        daddy.Eats(CreatureTemplate.Type.LizardTemplate, 1f);
         //daddy.HasDynamicRelationship(CreatureTemplate.Type.Slugcat, 200f);
     }
 
-    public override ArtificialIntelligence CreateRealizedAI(AbstractCreature acrit) => new DaddyAI(acrit, acrit.world);
+    public override ArtificialIntelligence CreateRealizedAI(AbstractCreature acrit) => new RadioAI(acrit, acrit.world);
 
     public override Creature CreateRealizedCreature(AbstractCreature acrit) => new RadioLongLegs(acrit, acrit.world);
 

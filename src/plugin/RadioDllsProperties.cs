@@ -21,15 +21,6 @@ sealed class RadioProperties : ItemProperties
         }
     }
 
-    public override void Nourishment(Player player, ref int quarterPips)
-    {
-        if (player.SlugCatClass == MoreSlugcatsEnums.SlugcatStatsName.Saint) {
-            quarterPips = -1;
-        } else {
-            quarterPips = radiodll.bodyChunks.Length;
-        }
-    }
-
     public override void Throwable(Player player, ref bool throwable)
     {
         throwable = true;

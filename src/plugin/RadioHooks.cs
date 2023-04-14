@@ -23,8 +23,9 @@ public class RadioHooks
             for (int i = self.eatObjects.Count-1; i >= 0; i --) {
                 if (self.eatObjects[i].progression > 1f && self.eatObjects[i].chunk.owner is Creature && self is RadioLongLegs) {
                     RadioLongLegs myself = self as RadioLongLegs;
-                    myself.foodPoints += (self.eatObjects[i].chunk.owner as Creature).State.meatLeft;
-                    myself.eatenFoodPoints += (self.eatObjects[i].chunk.owner as Creature).State.meatLeft;
+                    int increaseAmount = (self.eatObjects[i].chunk.owner as Creature).State.meatLeft;
+                    myself.foodPoints += increaseAmount>0?increaseAmount:1;
+                    myself.eatenFoodPoints += increaseAmount>0?increaseAmount:1;
                     /*for (int j = 0; j < self.bodyChunks.Length; j++) {
                         self.bodyChunks[j].rad += (self.eatObjects[i].chunk.owner as Creature).State.meatLeft;
                     }

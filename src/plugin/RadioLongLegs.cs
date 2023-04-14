@@ -48,13 +48,13 @@ public class RadioLongLegs : DaddyLongLegs, IPlayerEdible
             this.eyeColor = this.effectColor;
         }
         
-        float size = 0.4f;
-        int amountOfChunks = Random.Range(2, 5);
+        float size = 0.3f; //0.4f;
+        int amountOfChunks = /*7;*/Random.Range(4, 9);
         //Resizing
         for (int i = 0; i < this.bodyChunks.Length; i++) {
             this.bodyChunks[i].rad *= size;
             this.bodyChunks[i].mass *= 0.15f * size;
-            if (/*i != 0 && i != 1*/ i >= amountOfChunks && this.bodyChunks[i] != this.mainBodyChunk) {
+            if (i >= amountOfChunks && this.bodyChunks[i] != this.mainBodyChunk) {
                 this.bodyChunks[i] = null;
             }
         }
@@ -64,6 +64,9 @@ public class RadioLongLegs : DaddyLongLegs, IPlayerEdible
                 this.bodyChunkConnections[i] = null;
             }
         }
+        for (int i = 0; i < this.tentacles.Length; i++) {
+            this.tentacles[i].idealLength *= size;
+        }
         this.bodyChunks = this.bodyChunks.Where(c => c != null).ToArray();
         this.bodyChunkConnections = this.bodyChunkConnections.Where(c => c != null).ToArray();
         this.foodPoints = this.bodyChunks.Length;
@@ -71,7 +74,7 @@ public class RadioLongLegs : DaddyLongLegs, IPlayerEdible
     public override void Update(bool eu)
     {
         base.Update(eu);
-        this.eyeColor = new Color(0.1f*Mathf.Cos(this.colorTimer/2f)+0.86f - this.initialRColor/15f, 0.06f*Mathf.Cos(this.colorTimer/2)+0.74f - this.initialGColor/15f, 0.03f*Mathf.Cos(this.colorTimer/3.5f)+0.39f - this.initialBColor/15f);
+        this.eyeColor = new Color(0.1f*Mathf.Cos(this.colorTimer/2f)+0.86f - this.initialRColor/15f, 0.06f*Mathf.Cos(this.colorTimer/2.3f)+0.74f - this.initialGColor/15f, 0.03f*Mathf.Cos(this.colorTimer/3.5f)+0.39f - this.initialBColor/15f);
         this.colorTimer += 0.1f;
     }
 	public override void InitiateGraphicsModule()
