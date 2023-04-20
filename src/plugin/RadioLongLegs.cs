@@ -78,6 +78,9 @@ public class RadioLongLegs : DaddyLongLegs, IPlayerEdible
         base.Update(eu);
         this.eyeColor = new Color(0.1f*Mathf.Cos(this.colorTimer/2f)+0.86f - this.initialRColor/15f, 0.06f*Mathf.Cos(this.colorTimer/2.3f)+0.74f - this.initialGColor/15f, 0.03f*Mathf.Cos(this.colorTimer/3.5f)+0.39f - this.initialBColor/15f);
         this.colorTimer += 0.1f;
+        if (this.AI.noiseTracker != null && this.AI.noiseTracker.soundToExamine != null && this.AI.noiseTracker.soundToExamine.creatureRep != null && this.AI.noiseTracker.soundToExamine.creatureRep.representedCreature != null) {
+            Debug.Log(this.AI.noiseTracker.soundToExamine.creatureRep.representedCreature.type.ToString() + (this.AI as RadioAI).radioAI.pack.packName);
+        }
     }
 	public override void InitiateGraphicsModule()
 	{

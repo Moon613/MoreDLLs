@@ -38,10 +38,25 @@ public class RadioAI : DaddyAI
     {
         //this.noiseTracker.Update();
         base.Update();
+        this.noiseTracker.hearingSkill = 0.7f;
+        if (this.behavior == RadioAI.Behavior.Idle && (this.reactNoiseTime > 0 || (base.noiseTracker != null && base.noiseTracker.Utility() > 0f))) {
+            this.behavior = RadioAI.Behavior.ExamineSound;
+            Debug.Log("Set behavior. reactNoiseTime: " + this.reactNoiseTime);
+        }
+        if (this.behavior == RadioAI.Behavior.ExamineSound && this.reactNoiseTime > 0) {
+            this.creature.abstractAI.SetDestination(this.reactTarget);
+            Debug.Log("Set destination: " + this.reactTarget);
+        }
+        //this.noiseTracker.ignoreSeenNoises = false;
+        /*if (this.noiseTracker.sources.Count > 0 && this.noiseTracker.sources[0] != null)
+        {
+            this.noiseTracker.soundToExamine = base.noiseTracker.sources[0];
+            Debug.Log("Found new creature to examine: " + this.noiseTracker.soundToExamine.creatureRep.representedCreature.realizedCreature.Template.type.ToString());
+        }*/
         if (this.radioAI.communicating > 0) {
             this.daddy.room.AddObject(new Spark(this.daddy.mainBodyChunk.pos, new Vector2(5,5), Color.blue, null, 10, 20));
             Debug.Log("The pack count is: " + this.radioAI.pack.members.Count);
-            Debug.Log("Tried to communicate!");
+            Debug.Log("Tried to communicate! Communication is: " + this.radioAI.communicating);
         }
         /*AIModule aimodule = this.utilityComparer.HighestUtilityModule();
         if (aimodule != null && aimodule is NoiseTracker) {
@@ -73,11 +88,11 @@ public class RadioAIModule : AIModule
 			this.communicating--;
 		}
 		bool flag = false;
-		if (this.radiodll.safariControlled && this.radiodll.inputWithDiagonals != null && !this.radiodll.inputWithDiagonals.Value.AnyDirectionalInput && this.radiodll.inputWithDiagonals.Value.jmp)
-		{
-			this.communicating = 14;
-			flag = true;
-		}
+        if (this.radiodll.safariControlled && this.radiodll.inputWithDiagonals != null && !this.radiodll.inputWithDiagonals.Value.AnyDirectionalInput && this.radiodll.inputWithDiagonals.Value.jmp)
+        {
+            this.communicating = 14;
+            flag = true;
+        }
 		float num = Mathf.InverseLerp(0f, 14f, (float)this.communicating);
 		if (this.commFlicker < num)
 		{
@@ -105,20 +120,47 @@ public class RadioAIModule : AIModule
 					{
                         //Debug.Log("Made it to inner checks, calling PackMemberIsSeeingCreature");
 						this.PackMemberIsSeeingCreature(this.pack.members[j].abstRadiodll.realizedCreature as RadioLongLegs, this.pack.members[j].abstRadiodll.abstractAI.RealAI.tracker.GetRep(k));
-                        if (this.pack.members[j].abstRadiodll.realizedCreature.room == this.radiodll.room && this.pack.members[j].abstRadiodll.abstractAI.RealAI.noiseTracker != null && this.pack.members[j].abstRadiodll.abstractAI.RealAI.noiseTracker.sources.Count > 0 && this.pack.members[j].abstRadiodll != this.radiodll.abstractCreature)
-                        {
-                            //Debug.Log("Pack member " + this.pack.members[j].radiodll.abstractAI.RealAI.creature.creatureTemplate.type.ToString() + " is recieving info on target creature. It's sources are: " + this.pack.members[j].radiodll.abstractAI.RealAI.noiseTracker.sources[0].creatureRep.representedCreature.type.ToString() + ". And position is: " + this.pack.members[j].radiodll.abstractAI.RealAI.noiseTracker.sources[0].pos.ToString());
-                            this.pack.members[j].abstRadiodll.abstractAI.RealAI.noiseTracker.sources.AddRange(this.radiodll.AI.noiseTracker.sources);
-                            (this.pack.members[j].abstRadiodll.realizedCreature as RadioLongLegs).AI.behavior = DaddyAI.Behavior.ExamineSound;
-                            Debug.Log("Added sources and changed behavior!");
-                            //Debug.Log("Packmember sources are: " + this.pack.members[j].radiodll.abstractAI.RealAI.noiseTracker.sources.ToString());
-                        }
-                        else if (this.pack.members[j].abstRadiodll.realizedCreature.room != this.radiodll.room){
-                            this.pack.members[j].abstRadiodll.abstractAI.RealAI.SetDestination(this.radiodll.abstractCreature.pos);
-                        }
 					}
 				}
-                if (flag && this.pack.members[j].abstRadiodll != this.radiodll.abstractCreature)
+                Debug.Log(j);
+                /*if (this.pack.members[j].abstRadiodll.realizedCreature.room == this.radiodll.room && this.pack.members[j].abstRadiodll.abstractAI.RealAI.noiseTracker != null && this.radiodll.AI.noiseTracker.soundToExamine != null && this.pack.members[j].abstRadiodll != this.radiodll.abstractCreature)
+                {
+                    //Debug.Log("Pack member " + this.pack.members[j].radiodll.abstractAI.RealAI.creature.creatureTemplate.type.ToString() + " is recieving info on target creature. It's sources are: " + this.pack.members[j].radiodll.abstractAI.RealAI.noiseTracker.sources[0].creatureRep.representedCreature.type.ToString() + ". And position is: " + this.pack.members[j].radiodll.abstractAI.RealAI.noiseTracker.sources[0].pos.ToString());
+                    if (this.radiodll.AI.noiseTracker.soundToExamine.creatureRep.representedCreature != null && this.radiodll.AI.noiseTracker.soundToExamine.creatureRep.representedCreature.realizedCreature.Template.type.ToString() != "RadioDaddyLongLegs") {
+                        this.pack.members[j].abstRadiodll.abstractAI.RealAI.noiseTracker.soundToExamine = this.radiodll.AI.noiseTracker.soundToExamine;
+                        this.pack.members[j].abstRadiodll.abstractAI.RealAI.SetDestination(this.radiodll.room.GetWorldCoordinate(this.radiodll.AI.noiseTracker.soundToExamine.pos));
+                        this.pack.members[j].abstRadiodll.abstractAI.RealAI.noiseTracker.mysteriousNoises = 20f;
+                        Debug.Log("The new target creature is: " + this.pack.members[j].abstRadiodll.abstractAI.RealAI.noiseTracker.soundToExamine.creatureRep.representedCreature.realizedCreature.Template.type.ToString());
+                    }
+
+                    else if (this.radiodll.AI.noiseTracker.soundToExamine.creatureRep.representedCreature.realizedCreature.Template.type.ToString() == "RadioDaddyLongLegs") {
+                        //this.radiodll.AI.noiseTracker.soundToExamine = null;  //Might need to use this
+                        Debug.Log("Did not set soundToExamine because it was another RLL. Set this creature's soundToExamine to null");
+                        this.radiodll.AI.noiseTracker.soundToExamine = null;
+                    }
+                    if ((this.pack.members[j].abstRadiodll.realizedCreature as RadioLongLegs).AI.behavior != RadioAI.Behavior.Hunt) {
+                        (this.pack.members[j].abstRadiodll.realizedCreature as RadioLongLegs).AI.behavior = DaddyAI.Behavior.ExamineSound;
+                    }
+                    else if ((this.pack.members[j].abstRadiodll.realizedCreature as RadioLongLegs).AI.behavior == RadioAI.Behavior.Hunt) {
+                        Debug.Log("Did not change behavior to ExamineSound because it was already Hunt");
+                    }
+                    if (this.radiodll.AI.preyTracker.currentPrey != null) {
+                        this.pack.members[j].abstRadiodll.abstractAI.RealAI.preyTracker.currentPrey = this.radiodll.AI.preyTracker.currentPrey;
+                        Debug.Log("Set other pack member's prey to: " + this.radiodll.AI.preyTracker.currentPrey.critRep.representedCreature.realizedCreature.Template.type.ToString());
+                    }
+                    Debug.Log("Added sources and changed behavior!");
+                    try {Debug.Log(this.pack.members[j].abstRadiodll.abstractAI.RealAI.noiseTracker.soundToExamine.creatureRep.representedCreature.realizedCreature.Template.type.ToString());}
+                    catch (Exception err) {Debug.Log("There was an error: " + err);}
+                    //Debug.Log("Packmember sources are: " + this.pack.members[j].radiodll.abstractAI.RealAI.noiseTracker.sources.ToString());
+
+                    
+                }
+                else if (this.pack.members[j].abstRadiodll.abstractAI.RealAI.noiseTracker == null) {Debug.Log("Noisetracker is null");}
+                else if (this.radiodll.AI.noiseTracker.soundToExamine == null) {Debug.Log("The soundToExamine of 'this.radiodll' was null");}
+                else if (this.pack.members[j].abstRadiodll.realizedCreature.room != this.radiodll.room){
+                    this.pack.members[j].abstRadiodll.abstractAI.RealAI.SetDestination(this.radiodll.abstractCreature.pos);
+                }*/
+                if (flag && this.pack.members[j].abstRadiodll != this.radiodll.abstractCreature)    //Controls safrai pack movement
                 {
                     //(this.pack.members[j].radiodll.realizedCreature as RadioLongLegs).AI.excitement = 1f;
                     //(this.pack.members[j].radiodll.realizedCreature as RadioLongLegs).AI.runSpeed = 1f;
@@ -208,6 +250,7 @@ public class RadioAIModule : AIModule
         public void RemoveLongLegs(int index) {
             this.members.RemoveAt(index);
         }
+        public int num = -1;
         public string packName;
         public List<RadioAIModule.RadioPack.PackMember> members;
         public class PackMember

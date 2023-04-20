@@ -41,7 +41,7 @@ sealed class RadioDllCritob : Critob
     }
 
     public override void TileIsAllowed(AImap map, IntVector2 tilePos, ref bool? allow) {
-        allow = map.getAItile(tilePos).terrainProximity > 1;
+        allow = map.getAItile(tilePos).terrainProximity > 0;
         allow &= map.IsFreeSpace(tilePos, tilesOfFreeSpace: 1);
         allow |= map.room.GetTile(tilePos).Terrain == Room.Tile.TerrainType.ShortcutEntrance;
     }
@@ -62,22 +62,26 @@ sealed class RadioDllCritob : Critob
         {
             TileResistances = new()
             {
-                Air = new(1f, Allowed)
+                Air = new(1f, Allowed),
+                Corridor = new(0.9f, Allowed)
             },
             ConnectionResistances = new() 
             {
-                Standard = new(1f, Allowed),
+                Standard = new(0.1f, Allowed),
                 ShortCut = new(0f, Allowed),
                 BigCreatureShortCutSqueeze = new(0f, Allowed),
-                OffScreenMovement = new(1f, Allowed),
+                OffScreenMovement = new(0f, Allowed),
                 BetweenRooms = new(0f, Allowed)
             },
             DefaultRelationship = new(CreatureTemplate.Relationship.Type.Eats, 1f),
-            DamageResistances = new() { Base = 50f},
-            StunResistances = new() { Base = 25f},
+            DamageResistances = new() { Base = 1f},
+            StunResistances = new() { Base = 0.8f},
             HasAI = true,
             Pathing = PreBakedPathing.Ancestral(CreatureTemplate.Type.DaddyLongLegs)
         }.IntoTemplate();
+        t.smallCreature = true;
+        t.bodySize = 0.85f;
+        t.movementBasedVision = 1f;
         t.shortcutColor = new Color(1f, 168f/255f, 12f/255f);
         return t;
     }
