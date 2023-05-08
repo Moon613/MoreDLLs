@@ -14,7 +14,6 @@ namespace MoreDlls;
 
 public class ExplosiveHooks
 {
-    public static ConditionalWeakTable<DaddyLongLegs, DLLValues> customStuff = new();
     internal static void Apply()
     {
         
@@ -41,16 +40,16 @@ public class ExplosiveHooks
             orig(self, tChunk, creatureChunk);
             if (self.daddy.Template.type == CreatureTemplateType.ExplosiveDaddyLongLegs)
             {
+                var daddy = (self.daddy as ExplosiveLongLegs);
                 Creature? creatureTouched = creatureChunk.owner as Creature;
-                customStuff.TryGetValue(self.daddy, out var something);
-                if(!(creatureTouched.dead) && (creatureTouched.stun == 0) && (something.grabDecisionCooldown <= 0) && (Random.Range(0f, 80f) >= 79f))
+                if(!(creatureTouched.dead) && (creatureTouched.stun == 0) && (daddy.grabDecisionCooldown <= 0) && (Random.Range(0f, 80f) >= 79f))
                 {
-                    if (something.explosionCooldown <= 0f)
+                    if (daddy.explosionCooldown <= 0f)
                     {
                         Debug.Log("ATTENTION!");
-                        Debug.Log(something.albino);
+                        Debug.Log(daddy.albino);
                         Vector2 vector = Vector2.Lerp(creatureChunk.pos, creatureChunk.lastPos, 0.35f);
-                        if (!something.albino)
+                        if (!daddy.albino)
                         {
                             self.room.AddObject(new Explosion(self.room, self.owner, vector, 5, 80f, 0.25f, 0.5f, 60f, 0.07f, null, 0.8f, 0.5f, 0.3f));
                             for (int i = 0; i < 14; i++)
@@ -67,9 +66,9 @@ public class ExplosiveHooks
                             }
                             self.room.PlaySound(SoundID.Fire_Spear_Explode, vector);
                             self.room.InGameNoise(new InGameNoise(vector, 8000f, creatureTouched, 1f));
-                            something.explosionCooldown = Random.Range(2f, 8f);
+                            daddy.explosionCooldown = Random.Range(2f, 8f);
                         }
-                        else if (something.albino)
+                        else if (daddy.albino)
                         {
                             self.room.AddObject(new Explosion(self.room, creatureTouched, vector, 2, 112.5f, 3.1f, 5f, 140f, 0.125f, null, 0.3f, 80f, 0.5f));
                             self.room.AddObject(new Explosion(self.room, creatureTouched, vector, 2, 500f, 2f, 0f, 200f, 0.125f, null, 0.3f, 100f, 0.5f));
@@ -134,91 +133,13 @@ public class ExplosiveHooks
                             self.room.PlaySound(SoundID.Fire_Spear_Explode, vector);
                             self.room.InGameNoise(new InGameNoise(creatureTouched.firstChunk.pos, 7500f, creatureTouched, 1f));
                             creatureTouched.stun = Random.Range(50, 91);
-                            something.explosionCooldown = 6f;
+                            daddy.explosionCooldown = 6f;
                         }
-                        something.grabDecisionCooldown = Random.Range(45, 76) + Mathf.RoundToInt(something.explosionCooldown);
+                        daddy.grabDecisionCooldown = Random.Range(45, 76) + Mathf.RoundToInt(daddy.explosionCooldown);
                     }
                 }
             }
         };
 
-        On.DaddyLongLegs.ctor += (orig, self, abstractCreature, world) =>
-        {
-            orig(self, abstractCreature, world);
-            if (self.Template.type == CreatureTemplateType.ExplosiveDaddyLongLegs)
-            {
-                var state = Random.state;
-                Random.InitState(self.abstractCreature.ID.RandomSeed);
-                Random.state = state;
-                customStuff.Add(self, new DLLValues());
-                customStuff.TryGetValue(self, out var something);
-                float randNumColor = Random.Range(0,101);
-                //Use this line for testing the albino color
-                //randNumColor = 99f;
-                if (randNumColor >= 96)
-                {
-                    something.albino = true;
-                }
-                if (self.SizeClass)
-                {
-                    something.initialRColor = Random.Range(0.7f, 0.95f);
-                    something.initialGColor = Random.Range(0f, 0.1f);
-                    self.effectColor = new Color(something.initialRColor, something.initialGColor, 0f);
-                    self.eyeColor = self.effectColor;
-                    /*if (randNum > 5f)
-                    {
-                        something.initialRColor = Random.Range(0.75f, 0.825f);
-                        something.initialGColor = Random.Range(0.8f, 0.95f);
-                        self.effectColor = new Color(something.initialRColor, something.initialGColor, 0f);
-                        self.eyeColor = self.effectColor;
-                        something.eyecolor = 2;
-                    }*/
-                }
-                
-            }
-        };
-
-        On.DaddyGraphics.ApplyPalette += (orig, self, sLeaser, rCam, palette) =>
-        {
-            if (self.daddy.Template.type == CreatureTemplateType.ExplosiveDaddyLongLegs)
-            {
-                customStuff.TryGetValue(self.daddy, out var something);
-                if (something.albino)
-                {
-                    float baseRed = Random.Range(0.84f, 1f);
-                    palette.blackColor = new Color(baseRed, (Mathf.Exp(4f*(baseRed-0.025f)))/(Mathf.Exp(4f))+0.1f, (Mathf.Exp(4.1f*(baseRed-0.025f)))/(Mathf.Exp(4f))+0.005f);
-                }
-                else if (!something.albino)
-                {
-                    float baseRed = 0f;
-                    baseRed = Random.Range(0.09f, 0.2f);
-                    palette.blackColor = new Color(baseRed, 0.08f, 0.04f);
-                }
-            }
-        orig(self, sLeaser, rCam, palette);
-        };
-
-        On.DaddyLongLegs.Update += (orig, self, eu) =>
-        {
-            orig(self, eu);
-            customStuff.TryGetValue(self, out var something);
-            if (self.Template.type == CreatureTemplateType.ExplosiveDaddyLongLegs)
-            {
-                if (something.explosionCooldown > 0f)
-                {
-                    something.explosionCooldown -= 0.1f;
-                }
-                if (something.grabDecisionCooldown > 0)
-                {
-                    something.grabDecisionCooldown -= 1;
-                }
-                self.eyeColor = new Color(((Mathf.Sin((something.t/2) - ((1.25f*Mathf.PI)/2))+6.75f)/(Random.Range(7,10)+3*something.initialRColor)), ((Mathf.Sin((something.t/2) - (Mathf.PI/2))+1)/(Random.Range(8,11)+3*something.initialGColor)), 0f);
-                /*if (something.eyecolor == 2)
-                {
-                    self.eyeColor = new Color(((Mathf.Sin((1.5f*something.x) - ((3*Mathf.PI)/2))+6.75f)/(Random.Range(7,10)+3*something.initialRColor)), ((Mathf.Sin((3*something.x) - (Mathf.PI/2))+5)/(Random.Range(8,11)+3*something.initialGColor)), 0f);
-                }*/
-                something.t += 0.1f;
-            }
-        };
     }
 }

@@ -41,7 +41,7 @@ sealed class RadioDllCritob : Critob
     }
 
     public override void TileIsAllowed(AImap map, IntVector2 tilePos, ref bool? allow) {
-        allow = map.getAItile(tilePos).terrainProximity > 0;
+        allow = map.getAItile(tilePos).terrainProximity <= 9;
         allow &= map.IsFreeSpace(tilePos, tilesOfFreeSpace: 1);
         allow |= map.room.GetTile(tilePos).Terrain == Room.Tile.TerrainType.ShortcutEntrance;
     }
@@ -63,11 +63,11 @@ sealed class RadioDllCritob : Critob
             TileResistances = new()
             {
                 Air = new(1f, Allowed),
-                Corridor = new(0.9f, Allowed)
+                Corridor = new(0.85f, Allowed)
             },
             ConnectionResistances = new() 
             {
-                Standard = new(0.1f, Allowed),
+                Standard = new(0f, Allowed),
                 ShortCut = new(0f, Allowed),
                 BigCreatureShortCutSqueeze = new(0f, Allowed),
                 OffScreenMovement = new(0f, Allowed),
@@ -91,7 +91,7 @@ sealed class RadioDllCritob : Critob
         Relationships daddy = new Relationships(this.Type);
         daddy.IsInPack(this.Type, 1f);
         daddy.EatenBy(CreatureTemplateType.ZapDaddyLongLegs, 0.95f);
-        //daddy.HasDynamicRelationship(CreatureTemplate.Type.Slugcat, 200f);
+        //daddy.HasDynamicRelationship(CreatureTemplate.Type.Slugcat, 1f);
     }
 
     public override ArtificialIntelligence CreateRealizedAI(AbstractCreature acrit) => new RadioAI(acrit, acrit.world);

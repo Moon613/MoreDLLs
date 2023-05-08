@@ -84,9 +84,9 @@ sealed class ExplosiveDllCritob : Critob
 
     public override ArtificialIntelligence CreateRealizedAI(AbstractCreature acrit) => new DaddyAI(acrit, acrit.world);
 
-    public override Creature CreateRealizedCreature(AbstractCreature acrit) => new DaddyLongLegs(acrit, acrit.world);
+    public override Creature CreateRealizedCreature(AbstractCreature acrit) => new ExplosiveLongLegs(acrit, acrit.world);
 
-    public override CreatureState CreateState(AbstractCreature acrit) => new DaddyLongLegs.DaddyState(acrit);
+    public override CreatureState CreateState(AbstractCreature acrit) => new ExplosiveLongLegs.DaddyState(acrit);
 
     public override void LoadResources(RainWorld rainWorld) { }
 

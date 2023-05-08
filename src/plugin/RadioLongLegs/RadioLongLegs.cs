@@ -67,7 +67,7 @@ public class RadioLongLegs : DaddyLongLegs, IPlayerEdible
             }
         }
         for (int i = 0; i < this.tentacles.Length; i++) {
-            this.tentacles[i].idealLength *= size;
+            this.tentacles[i].idealLength *= size*0.9f;
         }
         this.bodyChunks = this.bodyChunks.Where(c => c != null).ToArray();
         this.bodyChunkConnections = this.bodyChunkConnections.Where(c => c != null).ToArray();
@@ -86,7 +86,7 @@ public class RadioLongLegs : DaddyLongLegs, IPlayerEdible
 	{
 		if (base.graphicsModule == null)
 		{
-			base.graphicsModule = new RadioGraphics(this);
+			this.graphicsModule = new RadioGraphics(this);
 		}
 	}
     public void BitByPlayer(Creature.Grasp grasp, bool eu)

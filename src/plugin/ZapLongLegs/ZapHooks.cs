@@ -240,6 +240,7 @@ static class ZapHooks
                 {
                     something.albino = true;
                 }
+                Debug.Log("The sizeclass is: " + self.SizeClass);
                 if (self.SizeClass)
                 {
                     something.initialGColor = Random.Range(0.87f, 0.97f);

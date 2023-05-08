@@ -22,10 +22,7 @@ public class MoreDllsOptions : OptionInterface {
 
     public override void Initialize() {
         OpTab opTab = new OpTab(this, "OptionsLongLegs");
-        this.Tabs = new[]
-        {
-            opTab
-        };
+        this.Tabs = new[] {opTab};
 
         UIArrPlayerOptions = new UIelement[]
         {

@@ -36,8 +36,8 @@ public class RadioGraphics : DaddyGraphics
         else if (!this.daddy.albino)
         {
             float baseRed = 0f, baseGreen = 0f, baseBlue = 0f;
-            baseRed = Random.Range(0.3f, 0.31f);
-            baseGreen = Random.Range(0.15f, 0.1616f);
+            baseRed = Random.Range(0.29f, 0.32f);
+            baseGreen = Random.Range(0.21f, 0.2216f);
             baseBlue = Random.Range(0.037f, 0.0419f);
             palette.blackColor = new Color(baseRed, baseGreen, baseBlue);
         }

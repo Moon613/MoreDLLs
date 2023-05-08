@@ -21,6 +21,7 @@ public class RadioAI : DaddyAI
         this.radioAI = new RadioAIModule(this);
         base.AddModule(radioAI);
         base.AddModule(new NoiseTracker(this, base.tracker));
+        this.preyTracker.persistanceBias = 10f;
         //base.AddModule(new NoiseTracker(this, base.tracker));
         //base.noiseTracker.forgetTime = 320;
         //base.noiseTracker.ignoreSeenNoises = false;
@@ -38,14 +39,26 @@ public class RadioAI : DaddyAI
     {
         //this.noiseTracker.Update();
         base.Update();
-        this.noiseTracker.hearingSkill = 0.7f;
+        this.noiseTracker.hearingSkill = 0.8f;
         if (this.behavior == RadioAI.Behavior.Idle && (this.reactNoiseTime > 0 || (base.noiseTracker != null && base.noiseTracker.Utility() > 0f))) {
             this.behavior = RadioAI.Behavior.ExamineSound;
-            Debug.Log("Set behavior. reactNoiseTime: " + this.reactNoiseTime);
+            Debug.Log("Set behavior.reactNoiseTime: " + this.reactNoiseTime);
         }
         if (this.behavior == RadioAI.Behavior.ExamineSound && this.reactNoiseTime > 0) {
             this.creature.abstractAI.SetDestination(this.reactTarget);
             Debug.Log("Set destination: " + this.reactTarget);
+        }
+        if (this.behavior == RadioAI.Behavior.Hunt && this.preyTracker.MostAttractivePrey != null && !this.preyTracker.MostAttractivePrey.deleteMeNextFrame && this.preyTracker.MostAttractivePrey.ticksSinceSeen < 200 && this.preyTracker.MostAttractivePrey.dynamicRelationship.currentRelationship.type != CreatureTemplate.Relationship.Type.Afraid) {
+            for (int i = 0; i < this.radioAI.pack.members.Count; i++) {
+                if (this.radioAI.pack.members[i].abstRadiodll.abstractAI.RealAI.preyTracker.currentPrey != this.preyTracker.currentPrey) {
+                    this.radioAI.pack.members[i].abstRadiodll.abstractAI.RealAI.preyTracker.prey.Clear();
+                    this.radioAI.pack.members[i].abstRadiodll.abstractAI.RealAI.preyTracker.currentPrey = this.preyTracker.currentPrey;
+                    this.radioAI.pack.members[i].abstRadiodll.abstractAI.RealAI.preyTracker.prey.Add(this.preyTracker.currentPrey);
+                    this.radioAI.pack.members[i].abstRadiodll.abstractAI.RealAI.preyTracker.MostAttractivePrey.ticksSinceSeen = this.preyTracker.MostAttractivePrey.ticksSinceSeen;
+                    (this.radioAI.pack.members[i].abstRadiodll.abstractAI.RealAI as RadioAI).behavior = RadioAI.Behavior.Hunt;
+                }
+            }
+            Debug.Log("This daddy is hunting");
         }
         //this.noiseTracker.ignoreSeenNoises = false;
         /*if (this.noiseTracker.sources.Count > 0 && this.noiseTracker.sources[0] != null)
