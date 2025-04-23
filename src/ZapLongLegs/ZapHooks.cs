@@ -43,7 +43,7 @@ static class ZapHooks
             if (self.daddy.Template.type == CreatureTemplateType.ZapDaddyLongLegs)
             {
                 Creature? creatureTouched = creatureChunk.owner as Creature;
-                customStuff.TryGetValue(self.daddy, out var something);
+                customStuff.TryGetValue((DaddyLongLegs)self.daddy, out var something);
                 if(!(creatureTouched.dead) && (creatureTouched.stun == 0) && (something.grabDecisionCooldown <= 0) && (Random.Range(0f, 80f) >= 79f))
                 {
                     if (something.explosionCooldown <= 0f)
@@ -80,7 +80,7 @@ static class ZapHooks
                         self.room.AddObject(new Spark((self as Tentacle).Tip.pos + a * 9f, a * Mathf.Lerp(6f, 18f, Random.value), Color.white, null, 20, 30));
                     }
                 }
-                customStuff.TryGetValue(self.daddy, out var something);
+                customStuff.TryGetValue((DaddyLongLegs)self.daddy, out var something);
                 if (Random.Range(0,(MoreDlls.staticOptions.poleZapFrequency.Value*10)+1) == MoreDlls.staticOptions.poleZapFrequency.Value*10 && MoreDlls.staticOptions.allowPoleZaps.Value && self != null)
                 {
                     if (self.room.GetTile((self as Tentacle).Tip.pos).horizontalBeam)

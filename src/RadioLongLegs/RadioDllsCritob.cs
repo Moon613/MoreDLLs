@@ -41,7 +41,7 @@ sealed class RadioDllCritob : Critob
     }
 
     public override void TileIsAllowed(AImap map, IntVector2 tilePos, ref bool? allow) {
-        allow = map.getAItile(tilePos).terrainProximity <= 9;
+        allow = map.getTerrainProximity(tilePos.x, tilePos.y) <= 9;
         allow &= map.IsFreeSpace(tilePos, tilesOfFreeSpace: 1);
         allow |= map.room.GetTile(tilePos).Terrain == Room.Tile.TerrainType.ShortcutEntrance;
     }

@@ -39,7 +39,7 @@ sealed class ZapDllCritob : Critob
         }
     }
 
-    public override void TileIsAllowed(AImap map, IntVector2 tilePos, ref bool? allow) => allow = map.getAItile(tilePos).terrainProximity > 1;
+    public override void TileIsAllowed(AImap map, IntVector2 tilePos, ref bool? allow) => allow = map.getTerrainProximity(tilePos.x, tilePos.y) > 1;
 
     public override int ExpeditionScore() => 35;
 
