@@ -7,3 +7,4 @@ lib/
 build/
 
 .fake
+/src/Properties

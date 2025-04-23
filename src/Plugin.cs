@@ -1,16 +1,8 @@
 using BepInEx;
-using UnityEngine;
-using Noise;
-using MoreSlugcats;
-using RWCustom;
 using Fisobs.Core;
 using System.Security;
 using System.Security.Permissions;
 using System;
-using System.Text.RegularExpressions;
-using System.Runtime.CompilerServices;
-using System.Collections.Generic;
-using Random = UnityEngine.Random;
 
 [module: UnverifiableCode]
 [assembly: SecurityPermission(SecurityAction.RequestMinimum, SkipVerification = true)]

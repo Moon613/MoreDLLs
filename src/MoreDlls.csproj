@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+    <LangVersion>preview</LangVersion>
+    <Nullable>enable</Nullable>
+    <OutDir>..\mod\plugins</OutDir>
+  </PropertyGroup>
+  <ItemGroup>
+      <Reference Include="../../REFERENCES/*.dll">
+          <Private>false</Private>
+      </Reference>
+  </ItemGroup>
+</Project>
